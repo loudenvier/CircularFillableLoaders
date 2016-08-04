@@ -3,6 +3,7 @@ package com.mikhaellopez.circularfillableloaderssample;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 import com.larswerkman.lobsterpicker.OnColorListener;
 import com.larswerkman.lobsterpicker.sliders.LobsterShadeSlider;
@@ -82,5 +83,13 @@ public class MainActivity extends AppCompatActivity {
             public void onColorSelected(@ColorInt int color) {
             }
         });
+    }
+
+    public void onRadioButtonDirectionClicked(View view) {
+        if (view.getId() == R.id.radio_up_down) {
+            circularFillableLoaders.setDirection(CircularFillableLoaders.Direction.UpDown);
+        } else {
+            circularFillableLoaders.setDirection(CircularFillableLoaders.Direction.BottomUp);
+        }
     }
 }
