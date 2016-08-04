@@ -24,6 +24,9 @@ import android.widget.ImageView;
  * Created by Mikhael LOPEZ on 09/10/2015.
  */
 public class CircularFillableLoaders extends ImageView {
+    // internal progress direction control
+    public enum Direction { UpDown, BottomUp }
+
     // Default values
     private static final float DEFAULT_AMPLITUDE_RATIO = 0.05f;
     private static final float DEFAULT_WATER_LEVEL_RATIO = 0.5f;
@@ -38,9 +41,10 @@ public class CircularFillableLoaders extends ImageView {
     private int waveColor;
 
     // Properties
-    private float waterLevelRatio = 1f;
+    private float waterLevelRatio = 1f; // now it depends on progress direction
     private float waveShiftRatio = DEFAULT_WAVE_SHIFT_RATIO;
     private float defaultWaterLevel;
+    private Direction direction = Direction.UpDown;
 
     // Object used to draw
     private Bitmap image;
@@ -93,6 +97,11 @@ public class CircularFillableLoaders extends ImageView {
         waveColor = attributes.getColor(R.styleable.CircularFillableLoaders_cfl_wave_color, DEFAULT_WAVE_COLOR);
         float amplitudeRatioAttr = attributes.getFloat(R.styleable.CircularFillableLoaders_cfl_wave_amplitude, DEFAULT_AMPLITUDE_RATIO);
         amplitudeRatio = (amplitudeRatioAttr > DEFAULT_AMPLITUDE_RATIO) ? DEFAULT_AMPLITUDE_RATIO : amplitudeRatioAttr;
+        // get progress direction
+        int directionValue = attributes.getInt(R.styleable.CircularFillableLoaders_cfl_direction, 0);
+        direction = Direction.values()[directionValue];
+        waterLevelRatio = direction == Direction.UpDown ? 1f : 0f;
+
         setProgress(attributes.getInteger(R.styleable.CircularFillableLoaders_cfl_progress, 0));
 
         if (attributes.getBoolean(R.styleable.CircularFillableLoaders_cfl_border, true)) {
@@ -358,13 +367,20 @@ public class CircularFillableLoaders extends ImageView {
 
     public void setProgress(int progress) {
         // vertical animation.
-        ObjectAnimator waterLevelAnim = ObjectAnimator.ofFloat(this, "waterLevelRatio", waterLevelRatio, 1f - ((float) progress / 100));
+        ObjectAnimator waterLevelAnim = direction == Direction.BottomUp
+                ? ObjectAnimator.ofFloat(this, "waterLevelRatio", waterLevelRatio, 0f + ((float) progress / 100))
+                : ObjectAnimator.ofFloat(this, "waterLevelRatio", waterLevelRatio, 1f - ((float) progress / 100));
         waterLevelAnim.setDuration(1000);
         waterLevelAnim.setInterpolator(new DecelerateInterpolator());
         AnimatorSet animatorSetProgress = new AnimatorSet();
         animatorSetProgress.play(waterLevelAnim);
         animatorSetProgress.start();
     }
+
+    public void setDirection(Direction direction) {
+        this.direction = direction;
+    }
+
     //endregion
 
     //region Animation

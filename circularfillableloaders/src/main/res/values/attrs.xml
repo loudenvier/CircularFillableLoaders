@@ -7,6 +7,10 @@
         <attr name="cfl_border_width" format="dimension"/>
         <attr name="cfl_wave_color" format="color"/>
         <attr name="cfl_wave_amplitude" format="float"/>
+        <attr name="cfl_direction">
+            <enum name="UpDown" value="0"/>
+            <enum name="BottomUp" value="1"/>
+        </attr>
     </declare-styleable>
 
 </resources>
